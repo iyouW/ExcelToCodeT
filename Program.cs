@@ -14,9 +14,9 @@ namespace JsBridge
             var path = "./Data/JsBridgeH5.xlsx";
             var m = ExcelParser.ParseAsync<FunctionMeta>(path).ToList();
 
-            var pathT = "./Template/Array.liquid";
+            var pathT = "./Template/Module.liquid";
             var model = new {
-                metas = new string[]{"hello", "world"}
+                metas = m
             };
             var res = await FluidEngine.RenderAsync(pathT, model);
             await File.WriteAllTextAsync("./Out/bridge.js",res);

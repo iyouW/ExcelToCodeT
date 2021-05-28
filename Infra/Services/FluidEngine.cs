@@ -1,6 +1,7 @@
 using Fluid;
 using System.Threading.Tasks;
 using System.IO;
+using JsBridge.Core.Models;
 
 namespace JsBridge.Infra.Services
 {
@@ -17,7 +18,9 @@ namespace JsBridge.Infra.Services
             var template = await File.ReadAllTextAsync(file);
             if(_parser.TryParse(template,out var result, out var error))
             {
-                var  context = new TemplateContext(model);
+                var options = new TemplateOptions();
+                options.MemberAccessStrategy.Register<FunctionMeta>();
+                var  context = new TemplateContext(model,options);
                 return await result.RenderAsync(context);
             }
             else
