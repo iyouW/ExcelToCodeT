@@ -1,0 +1,15 @@
+import { {% for meta in metas %} {{ meta.Proxy }}, {% endfor %} } from './../common/commonCommand.js'
+
+export default {
+{% for meta in metas %}
+{% if meta.Proxy != null %}
+    {{ meta.Name }}({% for param in meta.Parameters %} param, {% endfor %}){
+        return {{ meta.Proxy }}wrapper({
+            operation: {{ meta.Name }}
+        })
+    }
+{% endif %}
+{% endfor %}
+}
+
+

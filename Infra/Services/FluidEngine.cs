@@ -17,7 +17,8 @@ namespace JsBridge.Infra.Services
             var template = await File.ReadAllTextAsync(file);
             if(_parser.TryParse(template,out var result, out var error))
             {
-                return await result.RenderAsync(new TemplateContext(model));
+                var  context = new TemplateContext(model);
+                return await result.RenderAsync(context);
             }
             else
             {

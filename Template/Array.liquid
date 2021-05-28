@@ -1,0 +1,15 @@
+import { {% for meta in metas %} {{ meta }}, {% endfor %} } from './../common/commonCommand.js'
+
+export default {
+{% for meta in metas %}
+{% if meta != null %}
+    {{ meta }}(){
+        return {{ meta }}wrapper({
+            operation: {{ meta }}
+        })
+    }
+{% endif %}
+{% endfor %}
+}
+
+

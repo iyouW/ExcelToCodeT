@@ -11,8 +11,17 @@ namespace JsBridge
     {
         static async Task  Main(string[] args)
         {
-            await Task.Run(ParseExcel);
-            Console.WriteLine("........end..............");        
+            var path = "./Data/JsBridgeH5.xlsx";
+            var m = ExcelParser.ParseAsync<FunctionMeta>(path).ToList();
+
+            var pathT = "./Template/Array.liquid";
+            var model = new {
+                metas = new string[]{"hello", "world"}
+            };
+            var res = await FluidEngine.RenderAsync(pathT, model);
+            await File.WriteAllTextAsync("./Out/bridge.js",res);
+            Console.WriteLine(res);
+                    
         }
         static  void ParseExcel()
         {
