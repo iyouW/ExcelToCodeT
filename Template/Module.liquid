@@ -1,15 +1,18 @@
-import { {% for meta in metas %} {{ meta.Proxy }}, {% endfor %} } from './../common/commonCommand.js'
+import { {% for proxy in proxys %}{{ proxy}}{% if forloop.last != true %},{% endif %}{% endfor %} } from './../common/commonCommand.js'
 
-export default {
-{% for meta in metas %}
-{% if meta.Proxy != null %}
-    {{ meta.Name }}({% for param in meta.Parameters %} param, {% endfor %}){
-        return {{ meta.Proxy }}wrapper({
-            operation: {{ meta.Name }}
-        })
-    }
-{% endif %}
-{% endfor %}
+export default { {% for meta in metas %}{% if meta.Supported != '0' %}
+    /*
+     * {{meta.Description}}
+     * @return {Promise}
+     */
+    {{ meta.Name }}({% for param in meta.Parameters %}{{param}}{% if forloop.last != true %}, {% endif %}{% endfor %}){
+        {% if meta.Proxy == 'commandInterface' %}
+        return {{ meta.Proxy }}({% for param in meta.Parameters %}{% if forloop.first == true %}{operation:'{{ meta.Name }}',{% if param == 'flattenParams' %}...{% endif %}{{ param }}}{% else %}{{ param }}{% endif %}{% if forloop.last != true %}, {% endif %}{% endfor %})
+        {% else %}
+        return {{ meta.Proxy}}('{{meta.Name}}', {% for param in meta.Parameters %}{{ param }}{% if forloop.last != true %}, {% endif %}{% endfor %})
+        {% endif %}
+    }{% if forloop.last != true %},{% endif %}
+    {% endif %}{% endfor %}
 }
 
 

@@ -22,7 +22,12 @@ namespace JsBridge.Infra.Services
                 var res = new Dictionary<string, object>();
                 for (int j = 2; j < maxCol; j++)
                 {
+                    var h = headers[j];
                     var value = ReadCellValue(row.GetCell(j));
+                    if(h == "Parameters")
+                    {
+                        value = value?.ToString().Split(",");
+                    }
                     res.Add(headers[j], value); 
                 }
                 yield return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(res));
@@ -48,12 +53,24 @@ namespace JsBridge.Infra.Services
             {
                 return null;
             }
-            return cell.CellType switch {
-                CellType.Boolean => cell.BooleanCellValue,
-                CellType.Numeric => cell.NumericCellValue.ToString(),
-                CellType.String => cell.StringCellValue,
-                _ => null
-            };
+            switch (cell.CellType)
+            {
+                case CellType.Boolean:
+                    return cell.BooleanCellValue;
+                case CellType.Numeric:
+                    if(DateUtil.IsCellDateFormatted(cell))
+                    {
+                        return cell.DateCellValue;
+                    }
+                    else
+                    {
+                        return cell.NumericCellValue.ToString();
+                    }
+                case CellType.String:
+                    return cell.StringCellValue;
+                default:
+                    return null;
+            }
         }
         
     }

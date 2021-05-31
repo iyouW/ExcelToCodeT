@@ -9,18 +9,12 @@ namespace JsBridge.Infra.Services
     {
         private static readonly FluidParser _parser = new FluidParser();
 
-        public static async Task<string> RenderAsync(string file, object model)
+        public static async Task<string> RenderAsync(string template, object model)
         {
-            if(!File.Exists(file))
-            {
-                return string.Empty;
-            }
-            var template = await File.ReadAllTextAsync(file);
             if(_parser.TryParse(template,out var result, out var error))
             {
-                var options = new TemplateOptions();
-                options.MemberAccessStrategy.Register<FunctionMeta>();
-                var  context = new TemplateContext(model,options);
+                var  context = new TemplateContext(model);
+                context.Options.MemberAccessStrategy = new UnsafeMemberAccessStrategy();
                 return await result.RenderAsync(context);
             }
             else
